@@ -1,21 +1,18 @@
 pipeline {
 agent any
-stages {
- stage ('Clean workspace') {
-  steps {
-    cleanWs()
+ environment {
+        dotnet ='C:\\Program Files (x86)\\dotnet\\'
+        }
+stage('Restore packages'){
+   steps{
+      bat "dotnet restore .\CoreWebAPIV1\\CoreWebAPIV1.csproj"
+     }
   }
-	}
-stage('Restore packages') {
-  steps {
-    bat "dotnet restore ${workspace}\\CoreWebAPIV1.sln"
-  }
-}
-stage('Clean') {
-  steps {
-    bat "msbuild.exe ${workspace}\\CoreWebAPIV1.sln" /nologo /nr:\"false\" /p:platform=\"x64\" /p:configuration=\"release\" /t:clean"
-  }
-}
+stage('Clean'){
+    steps{
+        bat "dotnet clean .\CoreWebAPIV1\\CoreWebAPIV1.csproj"
+     }
+   }
 stage('Increase version') {
     steps {
         echo "${env.BUILD_NUMBER}"
@@ -30,10 +27,15 @@ stage('Increase version') {
         '''
      }
  }
- stage('Build') {
- steps {
-  bat "msbuild.exe ${workspace}\\CoreWebAPIV1.sln /nologo /nr:false  /p:platform=\"x64\" /p:configuration=\"release\" /p:PackageCertificateKeyFile=<path-to-certificate-file>.pfx /t:clean;restore;rebuild"
+stage('Build'){
+   steps{
+      bat "dotnet build .\CoreWebAPIV1\\CoreWebAPIV1.csproj --configuration Release"
+    }
  }
+ stage('Publish'){
+     steps{
+       bat "dotnet publish .\CoreWebAPIV1\\CoreWebAPIV1.csproj "
+     }
 }
 }
 }
