@@ -13,7 +13,7 @@ stage('Restore packages') {
 }
 stage('Clean') {
   steps {
-    bat "msbuild.exe ${workspace}\\CoreWebAPIV1.sln" /nologo /nr:false /p:platform=\"x64\" /p:configuration=\"release\" /t:clean"
+    bat "msbuild.exe ${workspace}\\CoreWebAPIV1.sln" /nologo /nr:\"false\" /p:platform=\"x64\" /p:configuration=\"release\" /t:clean"
   }
 }
 stage('Increase version') {
